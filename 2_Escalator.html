@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>On</title>
+  <style>
+    @font-face {
+                font-family: 'Lora';
+                src: url('fonts/Lora.ttf') format('truetype');
+            }
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background-color: white;
+
+      cursor: n-resize;
+    }
+
+    .original-image img {
+width: 80%;
+height: 600vh;
+display: block;
+object-fit: contain;
+margin: 0 auto; 
+/*border: 1px solid red; /* Debug border to see the container */
+
+
+}
+.image-container {
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 50vw;  /* 50% of viewport width */
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      z-index: 1;
+    }
+    
+    .image-section {
+      height: 100%;
+      width: 100%;
+      cursor: e-resize; /* Default upward pointing cursor */
+    }
+
+    .image-section a {
+      display: block;
+      width: 100%;
+      height: 100%;
+      cursor: e-resize;
+      text-decoration: none; /* Remove underline from links */
+    }
+
+    .image-section:hover {
+      cursor: pointer; /* Changes to pointer (hand) on hover */
+    }
+
+    .image-section img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      pointer-events: none; /* This ensures the image doesn't interfere with cursor */
+      z-index: 1;
+    }
+
+    .time {
+      position: fixed;
+                top: 20px;
+                left: 20px;
+                font-family: 'Lora', Arial, sans-serif;
+                font-size: 10px;
+                text-transform: lowercasecase;
+                letter-spacing: 1px;
+            }
+
+  </style>
+</head>
+<body>
+  <div class="original-image">
+    <img src="escalator1_yl.png" alt="Original Escalator">
+  </div>
+  <div class="image-container">
+    <div class="image-section">
+      <a href="L6.html" target="_blank">
+        <img src="transparentbutton.png" alt="L6">
+      </a>
+    </div>
+
+    <div class="image-section">
+      <a href="L5.html" target="_blank">
+        <img src="transparentbutton.png" alt="L5">
+      </a>
+    </div>
+    <div class="image-section">
+      <a href="L4.html" target="_blank">
+        <img src="transparentbutton.png" alt="L4">
+      </a>
+    </div>
+    <div class="image-section">
+      <a href="L3.html" target="_blank">
+        <img src="transparentbutton.png" alt="L3">
+      </a>
+    </div>
+    <div class="image-section">
+      <a href="L2.html" target="_blank">
+        <img src="transparentbutton.png" alt="L2">
+      </a>
+    </div>
+    <div class="image-section">
+      <a href="L1.html" target="_blank">
+        <img src="transparentbutton.png" alt="L1">
+      </a>
+    </div>
+  </div>
+
+  <script>
+    // Scroll to bottom when page loads
+    window.onload = function() {
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+  </script>
+
+  <div class="time">CET: <span id="paris-time"></span></div>
+  
+  <!-- Move audio element before the script -->
+  <audio id="scrollSound" src="waterflip1.m4a" preload="auto"></audio>
+
+  <script>
+    let lastScrollTop = 0;
+    let lastSoundTime = 0;
+    let upwardScrollCount = 0; // Counter for upward scrolls
+    let lastScrollTime = 0; // Track time between scrolls
+    const SOUND_DELAY = 500; // 500ms delay
+    const SCROLL_DELAY = 300; // Minimum time between scrolls (in ms)
+    const scrollSound = document.getElementById('scrollSound');
+
+    // Add debugging to check if audio is loaded
+    scrollSound.addEventListener('canplaythrough', function() {
+        console.log('Audio is ready to play');
+    });
+
+    // Add error handling for audio
+    scrollSound.addEventListener('error', function(e) {
+        console.error('Error loading audio:', e);
+    });
+
+    window.addEventListener('wheel', function(e) {
+        const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const currentTime = new Date().getTime();
+        
+        // Check if we're at the top of the page (with a small threshold)
+        const isAtTop = currentScrollTop < 10;
+        
+        // Check if scrolling up
+        if (e.deltaY < 0) {
+            console.log('Scrolling up!');
+            
+            // Only count upward scrolls if we're at the top and enough time has passed
+            if (isAtTop && (currentTime - lastScrollTime) > SCROLL_DELAY) {
+                upwardScrollCount++;
+                lastScrollTime = currentTime;
+                console.log('Upward scroll count:', upwardScrollCount);
+                
+                // Check if we've reached 5 upward scrolls
+                if (upwardScrollCount >= 5) {
+                    console.log('Reached 5 upward scrolls at top, redirecting...');
+                    window.location.href = '3_Pompidou.html'; // Replace with your target page URL
+                    return; // Stop further execution
+                }
+            }
+        } else {
+            console.log('Scrolling down');
+            // Reset counter when scrolling down
+            upwardScrollCount = 0;
+        }
+        
+        lastScrollTop = currentScrollTop;
+    });
+
+    window.addEventListener('scroll', function() {
+        const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const currentTime = new Date().getTime();
+        
+        // Check if enough time has passed for sound
+        if ((currentTime - lastSoundTime) > SOUND_DELAY) {
+            console.log('Playing sound');
+            try {
+                scrollSound.currentTime = 0;
+                scrollSound.play().catch(function(error) {
+                    console.error('Error playing sound:', error);
+                });
+                lastSoundTime = currentTime;
+            } catch (error) {
+                console.error('Error with sound:', error);
+            }
+        }
+    });
+  </script>
+
+  <script>
+    function updateParisTime() {
+        const now = new Date();
+        const parisTime = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Paris' }));
+        const hours = parisTime.getHours().toString().padStart(2, '0');
+        const minutes = parisTime.getMinutes().toString().padStart(2, '0');
+        document.getElementById('paris-time').textContent = `${hours}:${minutes}`;
+    }
+
+    // Update time immediately and then every second
+    updateParisTime();
+    setInterval(updateParisTime, 1000);
+  </script>
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!doctype html> 
+<html> 
+    <head> 
+        <style> 
+            @font-face {
+                font-family: 'Lora';
+                src: url('fonts/Lora.ttf') format('truetype');
+            }
+
+            body {
+                margin: 0;
+                padding: 0;
+                height: 100vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background-color: #ffffff;
+            }
+            
+            .box {
+                width: 110px;
+                height: 90px;
+                border: 2px solid #000;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+            
+            .box:hover {
+                background-color: #f0f0f0;
+                transform: scale(1.05);
+            }
+            
+            .text {
+                font-family: 'Lora', Arial, sans-serif;
+                font-size: 15px;
+                text-transform: lowercasecase;
+                letter-spacing: 2px;
+            }
+
+            .time {
+                position: absolute;
+                top: 20px;
+                left: 20px;
+                font-family: 'Lora', Arial, sans-serif;
+                font-size: 10px;
+                text-transform: lowercasecase;
+                letter-spacing: 1px;
+            }
+
+            a {
+                text-decoration: none;
+                color: inherit;
+            }
+
+            /* Progress bar styles */
+            .progress-container {
+                position: fixed;
+                left: 40px;
+                top: 50%;
+                transform: translateY(-50%);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                height: 300px;
+            }
+
+            .progress-line {
+                width: 100px;
+                height: 100%;
+                position: relative;
+            }
+
+            .progress-dot {
+                width: 12px;
+                height: 12px;
+                background-color: #000;
+                border-radius: 50%;
+                position: absolute;
+                left: 50%;
+                transform: translateX(-50%);
+                transition: all 0.3s ease;
+            }
+
+            /* Zigzag positioning for dots */
+            .progress-dot:nth-child(1) { top: 0%; left: 40%; }
+            .progress-dot:nth-child(2) { top: 20%; left: 60%; }
+            .progress-dot:nth-child(3) { top: 40%; left: 40%; }
+            .progress-dot:nth-child(4) { top: 60%; left: 60%; }
+            .progress-dot:nth-child(5) { top: 80%; left: 40%; }
+            .progress-dot:nth-child(6) { 
+                top: 100%; 
+                left: 50%;
+                width: 16px;
+                height: 16px;
+                background-color: white;
+                border: 1px solid black;
+                transform: translateX(-50%) scale(1.2);
+            }
+        </style> 
+    </head> 
+    <body> 
+        <div class="time">CET: <span id="paris-time"></span></div>
+        <div class="box">
+            <a href="2_escalator.html" class="text">step on</a>
+        </div>
+
+        <!-- Progress bar HTML -->
+        <div class="progress-container">
+            <div class="progress-line">
+                <div class="progress-dot"></div>
+                <div class="progress-dot"></div>
+                <div class="progress-dot"></div>
+                <div class="progress-dot"></div>
+                <div class="progress-dot"></div>
+                <div class="progress-dot"></div>
+            </div>
+        </div>
+
+        <script>
+            function updateParisTime() {
+                const now = new Date();
+                const parisTime = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Paris' }));
+                const hours = parisTime.getHours().toString().padStart(2, '0');
+                const minutes = parisTime.getMinutes().toString().padStart(2, '0');
+                document.getElementById('paris-time').textContent = `${hours}:${minutes}`;
+            }
+
+            // Update time immediately and then every second
+            updateParisTime();
+            setInterval(updateParisTime, 1000);
+        </script>
+    </body> 
+</html>
