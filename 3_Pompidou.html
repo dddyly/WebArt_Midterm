@@ -1,0 +1,283 @@
+<!doctype html> 
+<html> 
+    <head> 
+        <title>Already On</title>
+        <style> 
+            @font-face {
+                font-family: 'Lora';
+                src: url('fonts/Lora.ttf') format('truetype');
+            }
+
+            body {
+                margin: 0;
+                padding: 0;
+                height: 100vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background-color: #ffffff;
+            }
+            
+            .box {
+                width: 110px;
+                height: 90px;
+                border: 2px solid #000;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+            
+            .box:hover {
+                background-color: #f0f0f0;
+                transform: scale(1.05);
+            }
+            
+            .text {
+                font-family: 'Lora', Arial, sans-serif;
+                font-size: 15px;
+                text-transform: lowercasecase;
+                letter-spacing: 2px;
+            }
+
+            .time {
+                position: absolute;
+                top: 20px;
+                left: 20px;
+                font-family: 'Lora', Arial, sans-serif;
+                font-size: 10px;
+                text-transform: lowercasecase;
+                letter-spacing: 1px;
+            }
+
+            a {
+                text-decoration: none;
+                color: inherit;
+            }
+
+            /* Progress bar styles */
+            .progress-container {
+                position: fixed;
+                left: 40px;
+                top: 50%;
+                transform: translateY(-50%);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                height: 300px;
+            }
+
+            .progress-line {
+                width: 100px;
+                height: 100%;
+                position: relative;
+            }
+
+            .progress-dot {
+                width: 12px;
+                height: 12px;
+                background-color: #000;
+                border-radius: 50%;
+                position: absolute;
+                left: 50%;
+                transform: translateX(-50%);
+                transition: all 0.3s ease;
+            }
+
+            /* Zigzag positioning for dots */
+            .progress-dot:nth-child(1) { 
+                top: 0%; 
+                left: 50%;
+                width: 16px;
+                height: 16px;
+                background-color: white;
+                border: 1px solid black;
+                transform: translateX(-50%) scale(1.2);
+            }
+            .progress-dot:nth-child(2) { top: 20%; left: 40%; }
+            .progress-dot:nth-child(3) { top: 40%; left: 60%; }
+            .progress-dot:nth-child(4) { top: 60%; left: 40%; }
+            .progress-dot:nth-child(5) { top: 80%; left: 60%; }
+            .progress-dot:nth-child(6) { top: 100%; left: 40%; }
+
+            .buttons {
+                position: fixed;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                pointer-events: none;
+            }
+
+            .example-btn {
+                padding: 10px 20px;
+                font-family: 'Lora', Arial, sans-serif;
+                border: 1px solid #000;
+                background: none;
+                cursor: url('./Cflower.png') 16 16 / 32 32, pointer;
+                margin: 5px;
+                position: absolute;
+                opacity: 1;
+                visibility: visible;
+                transition: all 0.5s ease;
+                pointer-events: auto;
+            }
+
+            .b1, .b2, .b3, .b4, .b5, .b6 {
+                opacity: 0;
+                visibility: hidden;
+                transition: opacity 0.5s ease, visibility 0.5s ease;
+            }
+
+
+
+        </style> 
+    </head> 
+    <body> 
+        <div class="time">CET: <span id="paris-time"></span></div>
+        <div class="box">
+            <a href="ParisTest.html" class="text">step down
+                <br>
+                and see<br><br>
+                and be
+            </a>
+        </div>
+
+
+
+        <div class="buttons">
+            <button class="example-btn" id="btn1"> the city is in front of you </button>
+            <button class="example-btn" id="btn2"> they appreciated the work from Christian Marclay </button>
+            <button class="example-btn" id="btn3"> they gave you flowers </button>
+            <button class="example-btn" id="btn4"> they helped you to take your luggage to the station </button>
+            <button class="example-btn" id="btn5"> they met more new people with you together </button>
+            <button class="example-btn" id="btn6"> the sunset here is so pretty </button>
+        </div>
+
+        <script>
+            // Function to check if two rectangles overlap
+            function isOverlapping(rect1, rect2) {
+                return !(rect1.right < rect2.left || 
+                        rect1.left > rect2.right || 
+                        rect1.bottom < rect2.top || 
+                        rect1.top > rect2.bottom);
+            }
+
+            // Function to get button dimensions
+            function getButtonRect(button, x, y) {
+                return {
+                    left: x,
+                    right: x + button.offsetWidth,
+                    top: y,
+                    bottom: y + button.offsetHeight
+                };
+            }
+
+            // Function to get random position within viewport
+            function getRandomPosition(button) {
+                const maxAttempts = 50; // Prevent infinite loop
+                let attempts = 0;
+                
+                while (attempts < maxAttempts) {
+                    const x = Math.random() * (window.innerWidth - button.offsetWidth);
+                    const y = Math.random() * (window.innerHeight - button.offsetHeight);
+                    
+                    // Check if this position overlaps with any existing buttons
+                    const newRect = getButtonRect(button, x, y);
+                    const existingButtons = document.querySelectorAll('.example-btn');
+                    let hasOverlap = false;
+                    
+                    existingButtons.forEach(existingBtn => {
+                        if (existingBtn !== button && existingBtn.style.left && existingBtn.style.top) {
+                            const existingRect = getButtonRect(
+                                existingBtn,
+                                parseInt(existingBtn.style.left),
+                                parseInt(existingBtn.style.top)
+                            );
+                            if (isOverlapping(newRect, existingRect)) {
+                                hasOverlap = true;
+                            }
+                        }
+                    });
+                    
+                    if (!hasOverlap) {
+                        return { x, y };
+                    }
+                    
+                    attempts++;
+                }
+                
+                // If we couldn't find a non-overlapping position, return a fallback position
+                return {
+                    x: Math.random() * (window.innerWidth - button.offsetWidth),
+                    y: Math.random() * (window.innerHeight - button.offsetHeight)
+                };
+            }
+
+            // Function to position buttons randomly
+            function positionButtonsRandomly() {
+                const buttons = document.querySelectorAll('.example-btn');
+                buttons.forEach(button => {
+                    const { x, y } = getRandomPosition(button);
+                    button.style.left = `${x}px`;
+                    button.style.top = `${y}px`;
+                });
+            }
+
+            // Position buttons when page loads
+            window.addEventListener('load', positionButtonsRandomly);
+
+            // Existing button click handlers
+            document.getElementById('btn1').addEventListener('click', function() {
+                this.classList.add('b1');
+            })
+            
+            document.getElementById('btn2').addEventListener('click', function() {
+                this.classList.add('b2');
+            })
+            document.getElementById('btn3').addEventListener('click', function() {
+                this.classList.add('b3');
+            })
+
+            document.getElementById('btn4').addEventListener('click', function() {
+                this.classList.add('b4');
+            })
+
+            document.getElementById('btn5').addEventListener('click', function() {
+                this.classList.add('b5');
+            })
+            document.getElementById('btn6').addEventListener('click', function() {
+                this.classList.add('b6');
+            })
+            
+        </script>
+
+
+        <!-- Progress bar HTML -->
+        <div class="progress-container">
+            <div class="progress-line">
+                <div class="progress-dot"></div>
+                <div class="progress-dot"></div>
+                <div class="progress-dot"></div>
+                <div class="progress-dot"></div>
+                <div class="progress-dot"></div>
+                <div class="progress-dot"></div>
+            </div>
+        </div>
+
+        <script>
+            function updateParisTime() {
+                const now = new Date();
+                const parisTime = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Paris' }));
+                const hours = parisTime.getHours().toString().padStart(2, '0');
+                const minutes = parisTime.getMinutes().toString().padStart(2, '0');
+                document.getElementById('paris-time').textContent = `${hours}:${minutes}`;
+            }
+
+            // Update time immediately and then every second
+            updateParisTime();
+            setInterval(updateParisTime, 1000);
+        </script>
+    </body> 
+</html>
